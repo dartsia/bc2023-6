@@ -1,0 +1,233 @@
+openapi: 3.0.3
+info:
+  title: Device Manager API
+  description: API for devices' rental
+  version: 1.0.0-oas3
+servers:
+  - url: http://localhost:8000
+consumes:
+  - multipart/form-data
+paths:
+  /device/register:
+    post:
+      summary: Register a new device
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                deviceName:
+                  type: string
+                description:
+                  type: string
+                serialNumber:
+                  type: string
+                manufacturer:
+                  type: string
+      responses:
+        '200':
+          description: Successfully added device
+        '400':
+          description: Bad request
+        '500':
+          description: Internal Server Error
+  /device/{id}/upload:
+    post:
+      summary: Upload an image for the device
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                image:
+                  type: string
+      responses:
+        '200':
+          description: Image uploaded successfully
+        '400':
+          description: Bad request
+        '404':
+          description: Image not found for this device
+        '500':
+          description: Internal Server Error
+  /device/{id}:
+    get:
+      summary: Get device by id
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Device details
+        '404':
+          description: Device not found in the database
+        '500':
+          description: Internal Server Error
+  # /device/{id}/get-photo:
+  #   get:
+  #     summary: Get the photo of the device
+  #     parameters:
+  #       - name: id
+  #         in: path
+  #         required: true
+  #         schema:
+  #           type: integer
+  #     responses:
+  #       '200':
+  #         description: Image file
+  #       '404':
+  #         description: Image not found for this device
+  #       '500':
+  #         description: Internal Server Error
+  /device/{id}/update:
+    put:
+      summary: Update device parameters
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        description: Update an existent device in the store
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                deviceName:
+                  type: string
+                description:
+                  type: string
+                serialNumber:
+                  type: string
+                manufacturer:
+                  type: string
+      responses:
+        '200':
+          description: Device parameters updated successfully
+        '404':
+          description: Device not found in the database
+        '500':
+          description: Internal Server Error
+  /device/{id}/delete:
+    delete:
+      summary: Delete a device
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Device deleted successfully
+        '500':
+          description: Internal Server Error
+  /auth/register:
+    post:
+      summary: Register a new user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                password:
+                  type: string
+                email:
+                  type: string
+      responses:
+        '200':
+          description: Registration has been successful. You can now log in.
+        '400':
+          description: Bad request
+        '500':
+          description: Internal Server Error
+  /auth/login:
+    post:
+      summary: Login user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Login successful
+        '400':
+          description: Bad request
+        '500':
+          description: Internal Server Error
+  /borrow/{deviceId}:
+    post:
+      summary: Borrow a device
+      parameters:
+        - name: deviceId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Device assigned successfully
+        '400':
+          description: Device is not available for borrowing or Bad request
+        '404':
+          description: Device not found
+        '500':
+          description: Internal Server Error
+  /return/{deviceId}:
+    delete:
+      summary: Return a device
+      parameters:
+        - name: deviceId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Device returned successfully
+        '400':
+          description: Device is not assigned to the specified user or Bad request
+        '404':
+          description: Device not found
+        '500':
+          description: Internal Server Error
+  /devices-list:
+    get:
+      summary: Get all devices
+      responses:
+        '200':
+          description: List of all devices
+        '500':
+          description: Internal Server Error
+  /borrowed-devices:
+    get:
+      summary: Get devices in use for a user
+      responses:
+        '200':
+          description: List of devices in use for the user
+        '404':
+          description: User not found
+        '500':
+          description: Internal Server Error
